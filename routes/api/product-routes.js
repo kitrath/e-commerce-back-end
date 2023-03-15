@@ -22,13 +22,12 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
   try {
     const productId = req.params.id;
-    const productData = await Product.findPyPk(productId, {
+    const productData = await Product.findByPk(productId, {
       include: [
         { model: Category },
         { model: Tag, through: ProductTag, as: 'tags' },
       ],
     });
-
     if (!productData) {
       res.status(400).json({ message: `No product found with id ${productId}` });
     }
@@ -45,8 +44,9 @@ router.post('/', async (req, res) => {
     {
       product_name: "Basketball",
       price: 200.00,
-      stock: 3,
-      tagIds: [1, 2, 3, 4]
+      stock: 3
+      category_id: 2 (Optional)
+      tagIds: [1, 2, 3, 4] (Optional)
     }
   */
   Product.create(req.body)
@@ -74,6 +74,7 @@ router.post('/', async (req, res) => {
 // update product
 router.put('/:id', (req, res) => {
   // update product data
+  // Written so that `tagIds: [number]` must be present in req.body
   Product.update(req.body, {
     where: {
       id: req.params.id,
@@ -113,8 +114,23 @@ router.put('/:id', (req, res) => {
     });
 });
 
-router.delete('/:id', (req, res) => {
-  // delete one product by its `id` value
+router.delete('/:id', async (req, res) => {
+  try {
+    const productId = req.params.id;
+    const productData = await Product.destroy({
+      where: { id: productId }
+    });
+    
+    if (!productData) {
+      res.status(404).json({ message: `No product with id ${productId}` });
+    }
+
+    res.status(200).json(productData);
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json(err);
+  }
 });
 
 module.exports = router;
