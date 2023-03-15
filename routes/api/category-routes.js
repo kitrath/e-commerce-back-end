@@ -31,12 +31,42 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-router.post('/', (req, res) => {
-  // create a new category
+router.post('/', async (req, res) => {
+  try {
+    const category = await Category.create(req.body);
+
+    if (category) {
+      res.status(200).json(category);
+    } else {
+      res.status(500).json({
+        message: 'Unable to create category',
+        data: req.body
+      });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json(err);
+  }
 });
 
-router.put('/:id', (req, res) => {
-  // update a category by its `id` value
+router.put('/:id', async (req, res) => {
+  try {
+    const categoryId = req.params.id;
+    const category = await Category.update(req.body, {
+      where: {
+        id: categoryId
+      },
+    });
+
+    if (!category) {
+      res.status(404).json({ message: `No category with id ${categoryId}` });
+    }
+
+    res.status(200).json(category);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json(err);
+  }
 });
 
 router.delete('/:id', async (req, res) => {
