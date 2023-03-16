@@ -38,6 +38,12 @@ router.get('/:id', async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
+  /* req.body should look like this...
+    {
+      tag_name: "casual wear",
+      productIds: [1, 2] (Optional)
+    }
+  */
   try {
     const newTag = await Tag.create(req.body);
     const hasProductIds = Object.prototype.hasOwnProperty.call(req.body, 'productIds');
