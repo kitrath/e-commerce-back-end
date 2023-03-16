@@ -29,7 +29,7 @@ router.get('/:id', async (req, res) => {
       ],
     });
     if (!productData) {
-      res.status(400).json({ message: `No product found with id ${productId}` });
+      return res.status(400).json({ message: `No product found with id ${productId}` });
     }
   
     res.status(200).json(productData);
@@ -122,7 +122,7 @@ router.delete('/:id', async (req, res) => {
     });
     
     if (!productData) {
-      res.status(404).json({ message: `No product with id ${productId}` });
+      return res.status(404).json({ message: `No product with id ${productId}` });
     }
 
     res.status(200).json(productData);
